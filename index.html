@@ -73,12 +73,13 @@
 
     let currentBlob = null;
 
-    async function createPDF() {
+     async function createPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const form = document.getElementById("sectionsForm");
       const selected = form.querySelectorAll("input[type='checkbox']:checked");
-      let y = 10;
+      let y = 20; // initial top margin
+      const pageHeight = doc.internal.pageSize.getHeight();
 
       if (selected.length === 0) {
         alert("Please select at least one section.");
@@ -87,11 +88,18 @@
 
       selected.forEach((checkbox) => {
         const section = checkbox.value;
+        const lines = doc.splitTextToSize(sectionContent[section], 180);
+        const blockHeight = 7 + lines.length * 7 + 5;
+
+        if (y + blockHeight > pageHeight - 10) {
+          doc.addPage();
+          y = 20; // reset y position on new page
+        }
+
         doc.setFont(undefined, "bold");
         doc.text(section, 10, y);
         y += 7;
         doc.setFont(undefined, "normal");
-        const lines = doc.splitTextToSize(sectionContent[section], 180);
         doc.text(lines, 10, y);
         y += lines.length * 7 + 5;
       });
