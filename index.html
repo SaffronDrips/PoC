@@ -75,7 +75,7 @@
 
      async function createPDF() {
       const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+      const doc = new jsPDF({ format: "letter", unit: "mm", orientation: "portrait" });
       const form = document.getElementById("sectionsForm");
       const selected = form.querySelectorAll("input[type='checkbox']:checked");
       let y = 20; // initial top margin
